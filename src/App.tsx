@@ -3,6 +3,7 @@ import Tabs from "./components/Tabs";
 import Toolbar from "./components/Toolbar";
 import Spreadsheet from "./components/Spreadsheet";
 import { RowData } from "./types/RowData";
+import BottomTabs from "./components/BottomTabs";
 
 const sampleData: RowData[] = [
   {
@@ -72,7 +73,7 @@ const App = () => {
         <Tabs activeTab={activeTab} onTabChange={setActiveTab} />
         <Toolbar />
         <Spreadsheet data={sampleData} />
-        
+        <BottomTabs />
       </div>
     </>
   );
