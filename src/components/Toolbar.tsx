@@ -3,7 +3,13 @@ import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { PiArrowsSplitFill } from "react-icons/pi";
 import { FaRegShareFromSquare } from "react-icons/fa6";
 import { TbViewportTall } from "react-icons/tb";
-import { BiExport, BiImport, BiHide, BiSortAlt2, BiFilter  } from "react-icons/bi";
+import {
+  BiExport,
+  BiImport,
+  BiHide,
+  BiSortAlt2,
+  BiFilter,
+} from "react-icons/bi";
 
 const Toolbar: React.FC = () => {
   return (
@@ -19,25 +25,29 @@ const Toolbar: React.FC = () => {
         <button
           onClick={() => console.log("Hide fields clicked")}
           className="flex items-center px-3 py-1 "
-        ><BiHide className="mr-2" />
+        >
+          <BiHide className="mr-2" />
           Hide fields
         </button>
         <button
           onClick={() => console.log("Sort clicked")}
           className="flex items-center px-3 py-1 "
-        ><BiSortAlt2 className="mr-2"/>
+        >
+          <BiSortAlt2 className="mr-2" />
           Sort
         </button>
         <button
           onClick={() => console.log("Filter clicked")}
           className="flex items-center px-3 py-1 "
-        ><BiFilter className="mr-2" />
+        >
+          <BiFilter className="mr-2" />
           Filter
         </button>
         <button
           onClick={() => console.log("Cell view clicked")}
           className="flex items-center px-3 py-1 "
-        ><TbViewportTall className="mr-2" />
+        >
+          <TbViewportTall className="mr-2" />
           Cell view
         </button>
       </div>
@@ -66,7 +76,8 @@ const Toolbar: React.FC = () => {
         <button
           onClick={() => console.log("New Action clicked")}
           className="flex items-center px-3 py-2 text-sm border rounded bg-green-900 text-white"
-        ><PiArrowsSplitFill className="mr-2 size-4" />
+        >
+          <PiArrowsSplitFill className="mr-2 size-4" />
           New Action
         </button>
       </div>
