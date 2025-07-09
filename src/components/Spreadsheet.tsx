@@ -5,13 +5,16 @@ import {
   useBlockLayout,
   useResizeColumns,
   Column,
+  Row,
+  HeaderGroup,
+  ColumnInstance,
 } from "react-table";
 import StatusChip from "./StatusChip";
 import { RowData } from "../types/RowData";
 
 type Props = {
   data: RowData[];
-  minRows?: number; // Optional: minimum number of rows to show
+  minRows?: number;
 };
 
 const Spreadsheet: React.FC<Props> = ({ data, minRows = 12 }) => {
@@ -31,25 +34,24 @@ const Spreadsheet: React.FC<Props> = ({ data, minRows = 12 }) => {
     return [...data, ...Array(minRows - data.length).fill(emptyRow)];
   }, [data, minRows]);
 
-  // Helper to check if a row is completely empty (for padded rows)
   const isRowEmpty = (row: RowData) =>
     Object.values(row).every((v) => v === "");
 
-  const defaultSortType = (rowA: any, rowB: any, columnId: string) => {
-    const a = rowA.values[columnId];
-    const b = rowB.values[columnId];
+  const defaultSortType = React.useCallback(
+    (rowA: Row<RowData>, rowB: Row<RowData>, columnId: string) => {
+      const a = rowA.values[columnId];
+      const b = rowB.values[columnId];
+      const isAEmpty = isRowEmpty(rowA.original);
+      const isBEmpty = isRowEmpty(rowB.original);
 
-    const isAEmpty = isRowEmpty(rowA.original);
-    const isBEmpty = isRowEmpty(rowB.original);
+      if (isAEmpty && !isBEmpty) return 1;
+      if (!isAEmpty && isBEmpty) return -1;
+      if (isAEmpty && isBEmpty) return 0;
 
-    // If A is empty and B is not => B first
-    if (isAEmpty && !isBEmpty) return 1;
-    if (!isAEmpty && isBEmpty) return -1;
-    if (isAEmpty && isBEmpty) return 0;
-
-    // Otherwise, default string comparison
-    return String(a).localeCompare(String(b), undefined, { numeric: true });
-  };
+      return String(a).localeCompare(String(b), undefined, { numeric: true });
+    },
+    []
+  );
 
   const columns = React.useMemo<Column<RowData>[]>(
     () => [
@@ -101,7 +103,7 @@ const Spreadsheet: React.FC<Props> = ({ data, minRows = 12 }) => {
       { Header: "Due Date", accessor: "due", sortType: defaultSortType },
       { Header: "Est. Value", accessor: "value", sortType: defaultSortType },
     ],
-    []
+    [defaultSortType]
   );
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -116,33 +118,45 @@ const Spreadsheet: React.FC<Props> = ({ data, minRows = 12 }) => {
     <div className="overflow-x-auto">
       <table {...getTableProps()} className="min-w-full text-sm text-left">
         <thead className="bg-gray-100">
-          {headerGroups.map((headerGroup) => {
-            const { key, ...rest } = headerGroup.getHeaderGroupProps();
+          {headerGroups.map((headerGroup: HeaderGroup<RowData>) => {
+            const { key, ...restHeaderProps } =
+              headerGroup.getHeaderGroupProps();
             return (
-              <tr key={key} {...rest}>
-                {headerGroup.headers.map((column) => (
-                  <th
-                    key={column.id}
-                    {...(() => {
-                      const { key, ...rest } = column.getHeaderProps(
-                        (column as any).getSortByToggleProps?.() || {}
-                      );
-                      return rest;
-                    })()}
-                    className="p-2 relative"
-                  >
-                    {column.render("Header")}
-                    <div
-                      {...(column as any).getResizerProps?.()}
-                      className="absolute right-0 top-0 h-full w-0.5 bg-gray-400 cursor-col-resize"
-                    />
-                    {(column as any).isSorted
-                      ? (column as any).isSorted
-                        ? " 🔽"
-                        : " 🔼"
-                      : ""}
-                  </th>
-                ))}
+              <tr key={key} {...restHeaderProps}>
+                {headerGroup.headers.map((column: ColumnInstance<RowData>) => {
+                  const { key: colKey, ...restColProps } =
+                    column.getHeaderProps(
+                      "getSortByToggleProps" in column &&
+                        typeof column.getSortByToggleProps === "function"
+                        ? column.getSortByToggleProps()
+                        : undefined
+                    );
+
+                  return (
+                    <th key={colKey} {...restColProps} className="p-2 relative">
+                      {column.render("Header")}
+                      <div
+                        {...("getResizerProps" in column &&
+                        typeof column.getResizerProps === "function"
+                          ? column.getResizerProps()
+                          : {})}
+                        className="absolute right-0 top-0 h-full w-0.5 bg-gray-400 cursor-col-resize"
+                      />
+                      {(() => {
+                        const sortedColumn =
+                          column as ColumnInstance<RowData> & {
+                            isSorted?: boolean;
+                            isSortedDesc?: boolean;
+                          };
+                        return sortedColumn.isSorted
+                          ? sortedColumn.isSortedDesc
+                            ? " 🔽"
+                            : " 🔼"
+                          : null;
+                      })()}
+                    </th>
+                  );
+                })}
               </tr>
             );
           })}
@@ -150,16 +164,17 @@ const Spreadsheet: React.FC<Props> = ({ data, minRows = 12 }) => {
         <tbody {...getTableBodyProps()}>
           {rows.map((row, i) => {
             prepareRow(row);
-            const { key, ...rest } = row.getRowProps();
+            const { key: rowKey, ...restRowProps } = row.getRowProps();
             return (
-              <tr key={key} {...rest} className="hover:bg-gray-50">
+              <tr key={rowKey} {...restRowProps} className="hover:bg-gray-50">
                 {row.cells.map((cell) => {
-                  const { key, ...rest } = cell.getCellProps();
+                  const { key: cellKey, ...restCellProps } =
+                    cell.getCellProps();
                   if (cell.column.id === "serial") {
                     return (
                       <td
-                        key={key}
-                        {...rest}
+                        key={cellKey}
+                        {...restCellProps}
                         className="p-2 border-t border-r border-gray-200"
                       >
                         {i + 1}
@@ -168,8 +183,8 @@ const Spreadsheet: React.FC<Props> = ({ data, minRows = 12 }) => {
                   }
                   return (
                     <td
-                      key={key}
-                      {...rest}
+                      key={cellKey}
+                      {...restCellProps}
                       className="p-2 border-t border-r border-gray-200"
                     >
                       {cell.render("Cell")}
