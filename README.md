@@ -1,27 +1,50 @@
-# React + TypeScript + Vite
+# ✨ React Spreadsheet Prototype
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Front-end-only static spreadsheet UI prototype built with React, TypeScript, and Tailwind CSS — designed to match the Figma design pixel-perfectly.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 💡 Goal
 
-## Expanding the ESLint configuration
+Build a **static, front-end-only prototype** that visually matches the Figma design and provides a Google Sheets/Excel-like spreadsheet experience.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### 🎨 Figma Design
 
-- Configure the top-level `parserOptions` property like this:
+[Figma link](https://www.figma.com/design/3nywpu5sz45RrCmwe68QZP/Intern-Design-Assigment?node-id=2-2535&t=DJGGMt8I4fiZjoIB-1)
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+---
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## ⚙️ Tech Stack
+
+- **React 18** (using Vite)
+- **TypeScript** (strict mode)
+- **Tailwind CSS** for utility-first styling
+- **react-table** for building spreadsheet/grid functionality (sorting, resizing, etc.)
+- No global state library — only local component state
+
+---
+
+## ✅ Features
+
+- 📄 Pixel-perfect layout matching the Figma design
+- 📊 Spreadsheet-like behavior
+  - Sortable columns
+  - Resizable columns
+  - Row highlighting on hover
+- ⚡ Responsive and clean design
+- 🗂️ Placeholder data for a "real" spreadsheet feel
+- ✅ All buttons and tabs log to console (no dead UI)
+- 💬 Meaningful commit history
+- 🧹 Lint and type-check scripts included
+
+---
+
+## 🚀 Getting Started
+
+### 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/prakashs0909/SpreedSheet
+cd SpreedSheet
+npm install 
+npm run dev
